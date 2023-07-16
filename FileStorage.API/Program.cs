@@ -1,3 +1,6 @@
+using FileStorage.DAL;
+using Microsoft.EntityFrameworkCore;
+
 namespace FileStorage.API
 {
     public class Program
@@ -6,7 +9,11 @@ namespace FileStorage.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var connectionString = builder.Configuration.GetConnectionString("Default");
+
             // Add services to the container.
+            builder.Services.AddDbContext<FileStorageDbContext>(options =>
+            options.UseNpgsql(connectionString));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

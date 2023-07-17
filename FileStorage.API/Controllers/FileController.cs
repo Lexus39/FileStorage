@@ -18,7 +18,7 @@ namespace FileStorage.API.Controllers
             _env = env;
         }
 
-        [HttpPost("upload_multiple_file")]
+        [HttpPost("upload-multiple-file")]
         public async Task<IActionResult> CreateFile(IList<IFormFile> files)
         {
             //var path = Path.Combine(_env.ContentRootPath, "Development", "Files");
@@ -35,7 +35,7 @@ namespace FileStorage.API.Controllers
             return Ok();
         }
 
-        [HttpGet("list_files")]
+        [HttpGet("list-files")]
         public async Task<IActionResult> ListFiles()
         {
             var fileModels = await _fileStorage.ListFileModels();
@@ -44,6 +44,20 @@ namespace FileStorage.API.Controllers
                 UntrustedName = fileModel.UntrustedName,
                 ContentType = fileModel.ContentType
             }).ToList());
+        }
+
+        [HttpGet("download/{fileName}")]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            var model = await _fileStorage.GetFileModel(fileName);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
+            var memory = new MemoryStream();
+            using (var stream = await _fileStorage.DownloadFile(fileName, path))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, model.ContentType, fileName);
         }
     }
 }

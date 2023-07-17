@@ -1,6 +1,7 @@
 ﻿@page "/counter"
 @using FileStorage.Shared;
 @inject HttpClient Http;
+@inject IJSRuntime JS
 
 <PageTitle>Files</PageTitle>
 
@@ -25,6 +26,7 @@ else
             {
                 <tr>
                     <td>@file.UntrustedName</td>
+                    <td><button @onclick=@(() => DownloadFile(file.UntrustedName))></button></td>
                 </tr>
             }
         </tbody>
@@ -36,12 +38,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await Http.GetAsync("api/File/list_files");
+        var response = await Http.GetAsync("api/File/list-files");
         var newFiles = await response.Content.ReadFromJsonAsync<List<FileModelResponse>>();
         if (newFiles != null)
             files = newFiles;
-        //var response = await Http.GetFromJsonAsync<IList<FileModelResponse>>("api/Files/list_files");
-        //if (response != null)
-        //    files = response.ToList();
+    }
+
+    private async Task DownloadFile(string fileName)
+    {
+        var response = await Http.GetAsync($"api/File/download/{fileName}");
+
+        var fileStream = response.Content.ReadAsStream();
+
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
     }
 }

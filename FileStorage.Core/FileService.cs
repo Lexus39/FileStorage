@@ -39,6 +39,20 @@ namespace FileStorage.Core
             await _models.AddFileModel(model); 
         }
 
+        public async Task<FileStream> DownloadFile(string fileName, string pathToDirectory)
+        {
+            var model = await _models.GetFileModelByUntrustedName(fileName);
+            if (model == null)
+            {
+                throw new ArgumentException();
+            }
+            var path = Path.Combine(pathToDirectory, model.TrustedName);
+            return new FileStream(path, FileMode.Open);
+        }
+
+        public async Task<FileModel> GetFileModel(string untrustedName)
+            => await _models.GetFileModelByUntrustedName(untrustedName);
+
         public async Task<List<FileModel>> ListFileModels() => await _models.ListFileModels();
     }
 }

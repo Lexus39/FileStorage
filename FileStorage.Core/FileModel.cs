@@ -11,6 +11,6 @@ namespace FileStorage.Core
         public int FileId { get; set; }
         public string UntrustedName { get; set; } = null!;
         public string TrustedName { get; set; } = null!;
-        public string FileExtension { get; set; } = null!;
+        public string ContentType { get; set; } = null!;
     }
 }

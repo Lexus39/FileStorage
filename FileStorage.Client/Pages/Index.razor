@@ -1,0 +1,55 @@
+﻿@page "/"
+@using System.Net.Http.Headers;
+@using static System.Net.WebRequestMethods;
+@inject HttpClient Http;
+
+<PageTitle>Upload</PageTitle>
+
+<h1>Hello</h1>
+
+<InputFile OnChange="OnInputFileChange" multiple />
+
+@if (fileNames.Count > 0)
+{
+    <ul>
+        @foreach (var name in fileNames)
+        {
+            <li>
+                File: @name
+                <span>@_uploaded</span>
+            </li>
+        }
+    </ul>
+}
+
+@code
+{
+    private List<string> fileNames = new();
+    private long _uploaded = 0;
+    private readonly long maxFileSize = 50 * 1024 * 1024;
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        using var content = new MultipartFormDataContent();
+
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var fileContent = new StreamContent(file.OpenReadStream(50 * 1024 * 1024));
+            //var fileContent = new ProgressStreamContent(file.OpenReadStream(maxFileSize),
+            //1024 * 30, (uploaded) =>
+            //{
+            //    _uploaded += uploaded;
+
+            //    StateHasChanged();
+            //});
+            fileContent.Headers.ContentType =
+                        new MediaTypeHeaderValue(file.ContentType);
+            fileNames.Add(file.Name);
+            content.Add(
+                        content: fileContent,
+                        name: "\"files\"",
+                        fileName: file.Name);
+        }
+        await Http.PostAsync("api/File", content);
+    }
+}

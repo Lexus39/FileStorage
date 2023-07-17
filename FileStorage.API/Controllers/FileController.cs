@@ -18,16 +18,19 @@ namespace FileStorage.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFile(IFormFile file)
+        public async Task<IActionResult> CreateFile(IList<IFormFile> files)
         {
             //var path = Path.Combine(_env.ContentRootPath, "Development", "Files");
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
-            var createParameters = new CreateFileParameters()
+            foreach (var file in files)
             {
-                File = file,
-                Path = path
-            };
-            await _fileStorage.AddFile(createParameters);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
+                var createParameters = new CreateFileParameters()
+                {
+                    File = file,
+                    Path = path
+                };
+                await _fileStorage.AddFile(createParameters);
+            }
             return Ok();
         }
     }

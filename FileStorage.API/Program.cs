@@ -1,6 +1,7 @@
 using FileStorage.Core;
 using FileStorage.DAL;
 using Microsoft.EntityFrameworkCore;
+using FileStorage.Client;
 
 namespace FileStorage.API
 {
@@ -32,14 +33,22 @@ namespace FileStorage.API
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseWebAssemblyDebugging();
             }
 
             app.UseHttpsRedirection();
 
+            app.UseBlazorFrameworkFiles();
+
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            app.MapFallbackToFile("index.html");
 
             app.Run();
         }

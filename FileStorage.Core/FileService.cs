@@ -27,7 +27,7 @@ namespace FileStorage.Core
                 FileId = 0,
                 UntrustedName= untrustedName,
                 TrustedName= trustedName,
-                FileExtension= extension
+                FileExtension= file.ContentType
             };
             var savePath = Path.Combine(parameters.Path, trustedName);
 

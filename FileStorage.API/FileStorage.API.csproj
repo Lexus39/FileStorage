@@ -15,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\FileStorage.DAL\FileStorage.DAL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FileStorage.DAL\FileStorage.DAL.csproj" />
+    <Folder Include="Development\Files\" />
   </ItemGroup>
 
 </Project>

@@ -11,5 +11,7 @@ namespace FileStorage.Core
         public Task<int> AddFileModel(FileModel model);
 
         public Task<FileModel> GetFileModelByUntrustedName(string untrustedName);
+
+        public Task<List<FileModel>> ListFileModels();
     }
 }

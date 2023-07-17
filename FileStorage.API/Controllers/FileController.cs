@@ -1,4 +1,5 @@
 ﻿using FileStorage.Core;
+using FileStorage.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace FileStorage.API.Controllers
             _env = env;
         }
 
-        [HttpPost]
+        [HttpPost("upload_multiple_file")]
         public async Task<IActionResult> CreateFile(IList<IFormFile> files)
         {
             //var path = Path.Combine(_env.ContentRootPath, "Development", "Files");
@@ -32,6 +33,17 @@ namespace FileStorage.API.Controllers
                 await _fileStorage.AddFile(createParameters);
             }
             return Ok();
+        }
+
+        [HttpGet("list_files")]
+        public async Task<IActionResult> ListFiles()
+        {
+            var fileModels = await _fileStorage.ListFileModels();
+            return Ok(fileModels.Select(fileModel => new FileModelResponse()
+            {
+                UntrustedName = fileModel.UntrustedName,
+                ContentType = fileModel.ContentType
+            }).ToList());
         }
     }
 }

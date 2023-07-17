@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace FileStorage.Core
                 FileId = 0,
                 UntrustedName= untrustedName,
                 TrustedName= trustedName,
-                FileExtension= file.ContentType
+                ContentType= file.ContentType
             };
             var savePath = Path.Combine(parameters.Path, trustedName);
 
@@ -37,5 +38,7 @@ namespace FileStorage.Core
             }
             await _models.AddFileModel(model); 
         }
+
+        public async Task<List<FileModel>> ListFileModels() => await _models.ListFileModels();
     }
 }

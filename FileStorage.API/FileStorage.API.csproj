@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FileStorage.Client\FileStorage.Client.csproj" />
     <ProjectReference Include="..\FileStorage.DAL\FileStorage.DAL.csproj" />
+    <ProjectReference Include="..\FileStorage.Shared\FileStorage.Shared.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

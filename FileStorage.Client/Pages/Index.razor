@@ -50,6 +50,6 @@
                         name: "\"files\"",
                         fileName: file.Name);
         }
-        await Http.PostAsync("api/File", content);
+        await Http.PostAsync("api/File/upload_multiple_file", content);
     }
 }

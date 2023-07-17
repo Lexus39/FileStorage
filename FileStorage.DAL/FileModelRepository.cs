@@ -1,4 +1,5 @@
 ﻿using FileStorage.Core;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,16 @@ namespace FileStorage.DAL
             return createdModel.Entity.FileId;
         }
 
-        public Task<FileModel> GetFileModelByUntrustedName(string untrustedName)
+        public async Task<FileModel> GetFileModelByUntrustedName(string untrustedName)
         {
-            throw new NotImplementedException();
+            var model = await _context.Files.Where(file => file.UntrustedName == untrustedName).FirstOrDefaultAsync();
+            if (model == null)
+            {
+                throw new ArgumentException();
+            }
+            return model;
         }
+
+        public async Task<List<FileModel>> ListFileModels() => await _context.Files.ToListAsync();
     }
 }

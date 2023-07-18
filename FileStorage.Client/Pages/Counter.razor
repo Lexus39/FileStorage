@@ -26,7 +26,8 @@ else
             {
                 <tr>
                     <td>@file.UntrustedName</td>
-                    <td><button @onclick=@(() => DownloadFile(file.UntrustedName))></button></td>
+                    <td><button @onclick=@(() => DownloadFile(file.UntrustedName))>Download</button></td>
+                    <td><button @onclick=@(() => GetOneTimeLink(file.UntrustedName))></button></td>
                 </tr>
             }
         </tbody>
@@ -53,5 +54,11 @@ else
         using var streamRef = new DotNetStreamReference(stream: fileStream);
 
         await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+
+    private async Task GetOneTimeLink(string fileName)
+    {
+        var response = await Http.GetAsync($"api/File/generate-link/{fileName}");
+        var uri = await response.Content.ReadAsStringAsync();
     }
 }

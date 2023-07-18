@@ -59,5 +59,27 @@ namespace FileStorage.API.Controllers
             memory.Position = 0;
             return File(memory, model.ContentType, fileName);
         }
+
+        [HttpGet("generate-link/{fileName}")]
+        public async Task<IActionResult> CreateOneTimeLink(string fileName)
+        {
+            var model = await _fileStorage.GetFileModel(fileName);
+            return Ok(await _fileStorage.CreateOneTimeLink(model));
+        }
+
+        [HttpGet("one-time-link/{uri}")]
+        public async Task<IActionResult> DownloadFileByOneTimeLink(string uri)
+        {
+            var link = await _fileStorage.GetOneTimeLink(uri);
+            var model = await _fileStorage.GetFileModelById(link.FileModelId);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
+            var memory = new MemoryStream();
+            using (var stream = await _fileStorage.DownloadFileByLink(uri, path))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, model.ContentType, model.UntrustedName);
+        }
     }
 }

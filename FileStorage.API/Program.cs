@@ -19,6 +19,7 @@ namespace FileStorage.API
             options.UseNpgsql(connectionString));
 
             builder.Services.AddScoped<IFileModelRepository, FileModelRepository>();
+            builder.Services.AddScoped<IOneTimeLinkRepository, OneTimeLinkRepository>();
             builder.Services.AddScoped<FileService>();
 
             builder.Services.AddControllers();

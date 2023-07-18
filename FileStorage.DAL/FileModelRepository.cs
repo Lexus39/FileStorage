@@ -35,5 +35,15 @@ namespace FileStorage.DAL
         }
 
         public async Task<List<FileModel>> ListFileModels() => await _context.Files.ToListAsync();
+
+        public async Task<FileModel> GetFileModelById(int id)
+        {
+            var model = await _context.Files.FirstOrDefaultAsync(file => file.FileId == id);
+            if (model == null)
+            {
+                throw new ArgumentException();
+            }
+            return model;
+        }
     }
 }

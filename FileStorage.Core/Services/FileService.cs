@@ -23,7 +23,7 @@ namespace FileStorage.Core.Services
         {
             var file = parameters.File;
             string untrustedName = Path.GetFileNameWithoutExtension(file.FileName);
-            if (await _files.GetFileModelByUntrustedName(untrustedName) != null)
+            if (await _files.IsFileExists(untrustedName))
             {
                 throw new ArgumentException("File already exists!");
             }

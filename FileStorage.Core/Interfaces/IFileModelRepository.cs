@@ -15,5 +15,7 @@ namespace FileStorage.Core.Interfaces
         public Task<List<FileModel>> ListFileModels();
 
         public Task<FileModel> GetFileModelById(int id);
+
+        public Task<bool> IsFileExists(string fileName);
     }
 }

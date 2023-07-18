@@ -46,5 +46,10 @@ namespace FileStorage.DAL.Repositories
             }
             return model;
         }
+
+        public async Task<bool> IsFileExists(string fileName)
+        {
+            return await _context.Files.Where(file => file.UntrustedName == fileName).AnyAsync();
+        }
     }
 }

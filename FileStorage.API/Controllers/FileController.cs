@@ -28,7 +28,7 @@ namespace FileStorage.API.Controllers
         /// <param name="files"></param>
         /// <returns>Возвращает результаты загрузки</returns>
         /// <response code="200">Если все файлы загрузились</response>
-        /// <response code="500">Если хотя бы один из файлов не загрузился</response>
+        /// <response code="500">Если хотя бы один из файлов не загрузился(слишком большой размер, файл с таким именем уже существует)</response>
         [HttpPost("upload-multiple-file")]
         public async Task<ActionResult<List<UploadResult>>> CreateFile(IList<IFormFile> files)
         {

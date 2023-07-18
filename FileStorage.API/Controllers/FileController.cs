@@ -19,11 +19,13 @@ namespace FileStorage.API.Controllers
         }
 
         [HttpPost("upload-multiple-file")]
-        public async Task<IActionResult> CreateFile(IList<IFormFile> files)
+        public async Task<ActionResult<List<UploadResult>>> CreateFile(IList<IFormFile> files)
         {
-            //var path = Path.Combine(_env.ContentRootPath, "Development", "Files");
+            var uploadResults = new List<UploadResult>();
             foreach (var file in files)
             {
+                var uploadResult = new UploadResult();
+                uploadResult.Name = file.FileName;
                 var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
                 var createParameters = new CreateFileParameters()
                 {
@@ -31,8 +33,10 @@ namespace FileStorage.API.Controllers
                     Path = path
                 };
                 await _fileStorage.AddFile(createParameters);
+                uploadResult.IsUpload = true;
+                uploadResults.Add(uploadResult);
             }
-            return Ok();
+            return Ok(uploadResults);
         }
 
         [HttpGet("list-files")]

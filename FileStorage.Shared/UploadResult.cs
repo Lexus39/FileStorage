@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileStorage.Shared
 {
-    public class UpdateResult
+    public class UploadResult
     {
         public string Name { get; set; } = null!;
-        public string StoredName { get; set; } = null!;
         public bool IsUpload { get; set; }
     }
 }

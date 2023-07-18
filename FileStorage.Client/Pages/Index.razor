@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using System.Net.Http.Headers;
+@using FileStorage.Shared;
 @using static System.Net.WebRequestMethods;
 @inject HttpClient Http;
 
@@ -8,6 +9,7 @@
 <h1>Hello</h1>
 
 <InputFile OnChange="OnInputFileChange" multiple />
+<button @onclick=@(() => UploadFiles(_files))>Upload</button>
 
 @if (fileNames.Count > 0)
 {
@@ -16,7 +18,11 @@
         {
             <li>
                 File: @name
-                <span>@_uploaded</span>
+                <br>
+                @if(IsFileUpload(name))
+                {
+                    <span>Upload</span>
+                }
             </li>
         }
     </ul>
@@ -24,15 +30,22 @@
 
 @code
 {
+    private List<IBrowserFile> _files = new();
     private List<string> fileNames = new();
+    private List<UploadResult> uploadResults = new();
     private long _uploaded = 0;
     private readonly long maxFileSize = 50 * 1024 * 1024;
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
+        _files = new List<IBrowserFile>(e.GetMultipleFiles());
+    }
+
+    private async Task UploadFiles(List<IBrowserFile> files)
+    {
         using var content = new MultipartFormDataContent();
 
-        foreach (var file in e.GetMultipleFiles())
+        foreach (var file in files)
         {
             var fileContent = new StreamContent(file.OpenReadStream(50 * 1024 * 1024));
             //var fileContent = new ProgressStreamContent(file.OpenReadStream(maxFileSize),
@@ -50,6 +63,19 @@
                         name: "\"files\"",
                         fileName: file.Name);
         }
-        await Http.PostAsync("api/File/upload-multiple-file", content);
+        var response = await Http.PostAsync("api/File/upload-multiple-file", content);
+        var newUploadResults = await response.Content
+                .ReadFromJsonAsync<List<UploadResult>>();
+
+        if (newUploadResults is not null)
+        {
+            uploadResults = uploadResults.Concat(newUploadResults).ToList();
+        }
+    }
+
+    private bool IsFileUpload(string fileName)
+    {
+        return uploadResults.Where(result => result.Name == fileName)
+        .FirstOrDefault() != null;
     }
 }

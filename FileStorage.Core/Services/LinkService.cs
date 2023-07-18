@@ -24,12 +24,12 @@ namespace FileStorage.Core.Services
             var link = await _links.GetOneTimeLink(uri);
             if (link == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Link not found");
             }
             var fileModel = await _files.GetFileModelById(link.FileModelId);
             if (fileModel == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("File not found");
             }
             return new FileModelResponse()
             {

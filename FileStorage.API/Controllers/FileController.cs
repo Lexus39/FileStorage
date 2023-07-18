@@ -22,6 +22,13 @@ namespace FileStorage.API.Controllers
             _linkService = linkService;
         }
 
+        /// <summary>
+        /// Загружает несколько файлов. Максимальный размер файла - 30000000
+        /// </summary>
+        /// <param name="files"></param>
+        /// <returns>Возвращает результаты загрузки</returns>
+        /// <response code="200">Если все файлы загрузились</response>
+        /// <response code="500">Если хотя бы один из файлов не загрузился</response>
         [HttpPost("upload-multiple-file")]
         public async Task<ActionResult<List<UploadResult>>> CreateFile(IList<IFormFile> files)
         {
@@ -43,12 +50,24 @@ namespace FileStorage.API.Controllers
             return Ok(uploadResults);
         }
 
+        /// <summary>
+        /// Возвращает список с названиями и типом загруженных файлов
+        /// </summary>
+        /// <returns>Возвращает список FileModelResponse</returns>
+        /// <response code="200"></response>
         [HttpGet("list-files")]
         public async Task<IActionResult> ListFiles()
         {
             return Ok(await _fileStorage.ListFileModel());
         }
 
+        /// <summary>
+        /// Скачивает файл с указанным именем
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>File</returns>
+        /// <response code="200">Если удалось найти файл</response>
+        /// <response code="404">Если не удалось найти файл с таким именем</response>
         [HttpGet("download/{fileName}")]
         public async Task<IActionResult> DownloadFile(string fileName)
         {
@@ -65,6 +84,13 @@ namespace FileStorage.API.Controllers
             return File(memory, model.ContentType, fileName);
         }
 
+        /// <summary>
+        /// Генерирует одноразовую ссылку на файл
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>Возвращает строку</returns>
+        /// <response code="200">Если файл с указанным именем существует</response>
+        /// <response code="404">Если файл с таким именем не найден</response>
         [HttpGet("generate-link/{fileName}")]
         public async Task<IActionResult> CreateOneTimeLink(string fileName)
         {
@@ -73,6 +99,13 @@ namespace FileStorage.API.Controllers
             return Ok(await _linkService.CreateOneTimeLink(fileName));
         }
 
+        /// <summary>
+        /// Скачивает файл по однорозавой ссылке
+        /// </summary>
+        /// <param name="uri">Одноразовая ссылка</param>
+        /// <returns>File</returns>
+        /// <response code="200">Если одноразовая ссылка активна</response>
+        /// <response code="404">Если ссылка не действует</response>
         [HttpGet("one-time-link/{uri}")]
         public async Task<IActionResult> DownloadFileByOneTimeLink(string uri)
         {

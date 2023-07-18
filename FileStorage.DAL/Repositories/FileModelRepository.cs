@@ -30,7 +30,7 @@ namespace FileStorage.DAL.Repositories
             var model = await _context.Files.Where(file => file.UntrustedName == untrustedName).FirstOrDefaultAsync();
             if (model == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("File not found");
             }
             return model;
         }
@@ -42,7 +42,7 @@ namespace FileStorage.DAL.Repositories
             var model = await _context.Files.FirstOrDefaultAsync(file => file.FileId == id);
             if (model == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("File not found");
             }
             return model;
         }

@@ -29,6 +29,17 @@ namespace FileStorage.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.ConfigureSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Version = "v1",
+                    Title = "File storage API"
+                });
+                var basePath = Directory.GetCurrentDirectory();
+                var path = Path.Combine(basePath, @"obj\Debug\net6.0\FileStorage.API.xml");
+                options.IncludeXmlComments(path);
+            });
 
             var app = builder.Build();
 

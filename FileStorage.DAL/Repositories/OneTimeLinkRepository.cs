@@ -41,7 +41,7 @@ namespace FileStorage.DAL.Repositories
             var link = await _context.OneTimeLinks.FirstOrDefaultAsync(link => link.Uri == uri);
             if (link == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Link not found");
             }
             return link;
         }

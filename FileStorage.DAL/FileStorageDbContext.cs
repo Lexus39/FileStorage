@@ -1,4 +1,5 @@
 ﻿using FileStorage.Core;
+using FileStorage.DAL.Configurations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

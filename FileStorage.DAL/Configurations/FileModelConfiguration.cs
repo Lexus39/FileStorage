@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileStorage.DAL
+namespace FileStorage.DAL.Configurations
 {
     public class FileModelConfiguration : IEntityTypeConfiguration<FileModel>
     {

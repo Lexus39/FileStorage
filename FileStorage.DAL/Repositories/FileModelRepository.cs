@@ -1,4 +1,5 @@
 ﻿using FileStorage.Core;
+using FileStorage.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -6,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileStorage.DAL
+namespace FileStorage.DAL.Repositories
 {
     public class FileModelRepository : IFileModelRepository
     {
         private readonly FileStorageDbContext _context;
 
-        public FileModelRepository(FileStorageDbContext context) 
+        public FileModelRepository(FileStorageDbContext context)
         {
             _context = context;
         }

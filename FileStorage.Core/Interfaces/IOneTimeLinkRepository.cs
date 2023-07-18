@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileStorage.Core
+namespace FileStorage.Core.Interfaces
 {
     public interface IOneTimeLinkRepository
     {
@@ -13,5 +13,7 @@ namespace FileStorage.Core
         public Task CreateOneTimeLink(OneTimeLink oneTimeLink);
 
         public Task DeleteLinkById(int id);
+
+        public Task DeleteLink(string uri);
     }
 }

@@ -1,7 +1,9 @@
-using FileStorage.Core;
 using FileStorage.DAL;
 using Microsoft.EntityFrameworkCore;
 using FileStorage.Client;
+using FileStorage.Core.Services;
+using FileStorage.Core.Interfaces;
+using FileStorage.DAL.Repositories;
 
 namespace FileStorage.API
 {
@@ -21,6 +23,7 @@ namespace FileStorage.API
             builder.Services.AddScoped<IFileModelRepository, FileModelRepository>();
             builder.Services.AddScoped<IOneTimeLinkRepository, OneTimeLinkRepository>();
             builder.Services.AddScoped<FileService>();
+            builder.Services.AddScoped<LinkService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

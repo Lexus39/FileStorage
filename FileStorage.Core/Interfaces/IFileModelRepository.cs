@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileStorage.Core
+namespace FileStorage.Core.Interfaces
 {
     public interface IFileModelRepository
     {

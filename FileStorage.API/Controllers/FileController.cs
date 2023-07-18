@@ -1,7 +1,9 @@
 ﻿using FileStorage.Core;
+using FileStorage.Core.Services;
 using FileStorage.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace FileStorage.API.Controllers
 {
@@ -11,11 +13,13 @@ namespace FileStorage.API.Controllers
     {
         private readonly IWebHostEnvironment _env;
         private readonly FileService _fileStorage;
+        private readonly LinkService _linkService;
 
-        public FileController(FileService fileStorage, IWebHostEnvironment env)
+        public FileController(FileService fileStorage, IWebHostEnvironment env, LinkService linkService)
         {
             _fileStorage = fileStorage;
             _env = env;
+            _linkService = linkService;
         }
 
         [HttpPost("upload-multiple-file")]
@@ -32,7 +36,7 @@ namespace FileStorage.API.Controllers
                     File = file,
                     Path = path
                 };
-                await _fileStorage.AddFile(createParameters);
+                await _fileStorage.UploadFile(createParameters);             
                 uploadResult.IsUpload = true;
                 uploadResults.Add(uploadResult);
             }
@@ -42,18 +46,15 @@ namespace FileStorage.API.Controllers
         [HttpGet("list-files")]
         public async Task<IActionResult> ListFiles()
         {
-            var fileModels = await _fileStorage.ListFileModels();
-            return Ok(fileModels.Select(fileModel => new FileModelResponse()
-            {
-                UntrustedName = fileModel.UntrustedName,
-                ContentType = fileModel.ContentType
-            }).ToList());
+            return Ok(await _fileStorage.ListFileModel());
         }
 
         [HttpGet("download/{fileName}")]
         public async Task<IActionResult> DownloadFile(string fileName)
         {
             var model = await _fileStorage.GetFileModel(fileName);
+            if (model == null)
+                return NotFound();
             var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
             var memory = new MemoryStream();
             using (var stream = await _fileStorage.DownloadFile(fileName, path))
@@ -67,22 +68,25 @@ namespace FileStorage.API.Controllers
         [HttpGet("generate-link/{fileName}")]
         public async Task<IActionResult> CreateOneTimeLink(string fileName)
         {
-            var model = await _fileStorage.GetFileModel(fileName);
-            return Ok(await _fileStorage.CreateOneTimeLink(model));
+            if (await _fileStorage.GetFileModel(fileName) == null)
+                return NotFound();
+            return Ok(await _linkService.CreateOneTimeLink(fileName));
         }
 
         [HttpGet("one-time-link/{uri}")]
         public async Task<IActionResult> DownloadFileByOneTimeLink(string uri)
         {
-            var link = await _fileStorage.GetOneTimeLink(uri);
-            var model = await _fileStorage.GetFileModelById(link.FileModelId);
+            var model = await _linkService.GetFileModelByUri(uri);
+            if (model == null) 
+                return NotFound();
             var path = Path.Combine(Directory.GetCurrentDirectory(), "Development", "Files");
             var memory = new MemoryStream();
-            using (var stream = await _fileStorage.DownloadFileByLink(uri, path))
+            using (var stream = await _fileStorage.DownloadFile(model.UntrustedName, path))
             {
                 await stream.CopyToAsync(memory);
             }
             memory.Position = 0;
+            await _linkService.DeleteOneTimeLink(uri);
             return File(memory, model.ContentType, model.UntrustedName);
         }
     }
